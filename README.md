@@ -35,7 +35,9 @@ Entries are added to a cache. The SponsorBlock data is considered "fresh" for 12
 
 ## Troubleshooting
 
-### A literal bug
+### ~~A literal bug~~
+
+[**Update: Fixed upstream, thanks sponsorblock.py!**](https://github.com/wasi-master/sponsorblock.py/issues/4)
 
 I found this bug on Raspbian 10. If you get an error that looks like this:
 
@@ -58,4 +60,4 @@ from typing import Dict
 from typing_extensions import Literal
 ````
 
-Then retry setup. 
+Then retry setup.
