@@ -1,22 +1,32 @@
-# SBRemote for YouTube on Apple TV
+# SBRemote for YouTube on Apple TV (Docker)
 
-Use SponsorBlock with YouTube on Apple TV 
+Use SponsorBlock with YouTube on Apple TV (Docker)
 
 ## Introduction
 
-This is a program that runs in the background on a computer. After pairing with an Apple TV, it will ask the Apple TV what is being played on YouTube. If the video being played has an entry in the SponsorBlock database, it will attempt to skip those sections. 
+This is a program by `https://github.com/bsharper/sbremote` optimized by me for Docker. After pairing with an Apple TV, it will ask the Apple TV what is being played on YouTube. If the video being played has an entry in the SponsorBlock database, it will attempt to skip those sections. 
 
 ## Requirements
 
-You should just need a computer with Python 3 installed. The support libraries are listed in `requirements.txt`
+You should just need a local home server (standalone instance or linux-base router) with Docker and Python 3 installed. The support libraries are listed in `requirements.txt`
 
 ## Usage
 
 1. Clone this repository `git clone https://github.com/bsharper/sbremote`
-2. Run `./setup.sh`. This will create a venv environment in the current directory and install required libraries.
-3. Run `./runme.sh`. This will start the program and allow you to pair with an Apple TV. Leave this program running in the background.
+2. Run `cd sbremote`
+2. Run `docker volume create sbremote_data`. This will create a volume for config file.
+3. Run `docker build -t sbremote .`. This will build sbremote image.
+4. Run `docker run --rm -it --network=host -v sbremote_data:/data sbremote --setup`. This will start setup container. Follow all the steps. If everything is successful, the configuration file will be saved to the sbremote_data. Setup container will remove automatically. 
+5. Run `sudo docker run -d --name SBRemote --restart=unless-stopped --network=host -v sbremote_data:/data sbremote --run`. This will start Sponsorblock service with your config in sbremote_data volume.
+6. That's all! After sometime service will be alive. You can watch logs by `docker logs SBRemote` and report issues for some bugs. 
 
-## Configuration
+## Limitations
+
+Currently, one device for one service instance is supported.
+
+## Plans
+
+Provide support for multiple devices with a single instance of the service.
 
 ### What gets skipped?
 
@@ -32,32 +42,3 @@ Please note that the process of identifying a video and getting the list of skip
 2. Get the list of skips from SponsorBlock API [using sponsorblock.py](https://github.com/wasi-master/sponsorblock.py)
 
 Entries are added to a cache. The SponsorBlock data is considered "fresh" for 12 hours, meaning after 12 hours we will request a new update from SponsorBlock. This helps when a new video comes out and doesn't have an entry yet. However, the first lookup (to find the video ID) isn't performed if the channel name and video title haven't changed.
-
-## Troubleshooting
-
-### ~~A literal bug~~
-
-[**Update: Fixed upstream, thanks sponsorblock.py!**](https://github.com/wasi-master/sponsorblock.py/issues/4)
-
-I found this bug on Raspbian 10. If you get an error that looks like this:
-
-`ImportError: cannot import name 'Literal' from 'typing' (/usr/lib/python3.7/typing.py)`
-
-It means you are running an older version of Python 3 (older than 3.8). You can update Python to 3.8 or higher, or make the following change to fix the issue. Edit the `env/lib/python3.7/site-packages/sponsorblock/utils.py` file using `vi` or `nano` or `emacs` or `ed` or a [whatever editor you use](https://imgs.xkcd.com/comics/real_programmers.png).
-
-`nano env/lib/python3.7/site-packages/sponsorblock/utils.py`
-
-Then look for the line at the top that looks like:
-
-````
-from typing import Dict, Literal
-````
-
-And change that to 2 lines:
-
-````
-from typing import Dict
-from typing_extensions import Literal
-````
-
-Then retry setup.
