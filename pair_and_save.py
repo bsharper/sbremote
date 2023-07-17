@@ -20,8 +20,7 @@ async def scan(loop):
     
     #print ("Scanning...", end="", flush=True)
     #print ("done", flush=True)
-
-    print ("Select the number for the ATV to pair with:\n")
+    
     ar = {}
     names = {}
     choices = []
@@ -32,9 +31,10 @@ async def scan(loop):
     
     questions = [ inquirer.List("atv", message="Select a device to pair with", choices=choices)]
     answers = inquirer.prompt(questions)
-    
+
     name = answers['atv']
-    atv = ar[name]
+    
+    atv = ar[name[0]]
     
     print ("pairing atv %s" % (atv))
     pairing = await pair(atv, Protocol.AirPlay, loop)

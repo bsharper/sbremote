@@ -37,7 +37,8 @@ fi
 # Switching from $PYEXE to python because venv should be active now
 python -m pip install -r requirements.txt
 echo "============================================================"
-echo "Try running this script again. If you don't see any errors, try \"./runme.sh\""
+echo "The environment and packages are installed, let's move on to the connection AppleTV ->>"
 echo "============================================================"
 
-
+source env/bin/activate
+python pair_and_save.py

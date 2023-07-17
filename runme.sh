@@ -1,7 +1,7 @@
 #!/bin/bash
 
-if [[ ! -d env ]]; then
-	echo "Run \"./setup.sh\" first"
+if [[ ! -d appletv.json ]]; then
+	echo "Run docker -it first to setup config!!!"
 	exit 
 fi
 

@@ -4,3 +4,4 @@ inquirer
 sponsorblock
 youtube-search-python
 humanize
+argparse
