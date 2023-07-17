@@ -12,7 +12,7 @@ from yaspin import yaspin
 pair = pyatv.pair
 Protocol = pyatv.const.Protocol
 
-output_filename = "appletv.json"
+output_filename = "/data/appletv.json"
 
 async def scan(loop):
     with yaspin(text="Scanning") as sp:
@@ -34,7 +34,7 @@ async def scan(loop):
 
     name = answers['atv']
     
-    atv = ar[name[0]]
+    atv = ar[name]
     
     print ("pairing atv %s" % (atv))
     pairing = await pair(atv, Protocol.AirPlay, loop)

@@ -1,0 +1,17 @@
+sudo docker volume create sbremote_data
+
+sudo docker build -t sbremote .
+
+sudo docker run --rm -it \
+--network=host \
+-v sbremote_data:/data \
+sbremote \
+--setup
+
+sudo docker run -d \
+--name SBRemote \
+--restart=unless-stopped \
+--network=host \
+-v sbremote_data:/data \
+sbremote \
+--run

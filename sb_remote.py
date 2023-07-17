@@ -154,11 +154,11 @@ def print_state(txt):
             print (ln)
 
 async def connect_atv():
-    while not os.path.exists("appletv.json"):
+    while not os.path.exists("/data/appletv.json"):
         from pair_and_save import scan
         await scan(loop)
     
-    data = json.load(open('appletv.json'))
+    data = json.load(open('/data/appletv.json'))
 
     id = data["identifier"]
     creds = data["credentials"]
