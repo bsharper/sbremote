@@ -24,7 +24,7 @@ skip_types = ["sponsor", "selfpromo", "intro", "outro"]
 proj_name = "SBRemote"
 proj_version = "0.2"
 janky_restart = True
-announce_skips = True
+announce_skips = False
 
 if not os.path.exists("restart.sh"):
     janky_restart = False
