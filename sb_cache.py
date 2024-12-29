@@ -2,7 +2,7 @@ import os
 import json
 import time
 import sponsorblock as sb
-from youtubesearchpython import VideosSearch
+from yt_dlp import YoutubeDL
 
 class SBRemoteCache():
     def __init__ (self, fn="vidcache.json", debug = False):
@@ -16,8 +16,25 @@ class SBRemoteCache():
     def search(self, arg):
         if self.debug:
             print (f"New search: Looking up YT data for video \"{arg}\" ")
-        videosSearch = VideosSearch(arg, limit = 2)
-        return videosSearch.result()['result'][0]
+        
+        ydl_opts = {
+            'quiet': True,
+            'noplaylist': True,
+            'default_search': 'ytsearch2',
+            'format': 'best',
+        }
+
+        with YoutubeDL(ydl_opts) as ydl:
+            try:
+                result = ydl.extract_info(arg, download=False)
+                if 'entries' in result and len(result['entries']) > 0:
+                    return result['entries'][0]
+                else:
+                    print("No results found.")
+                    return None
+            except Exception as e:
+                print(f"An error occurred: {e}")
+                return None
 
 
     def load_cache(self):

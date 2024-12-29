@@ -20,7 +20,7 @@ if [[ "$PV" != "3" ]]; then
 fi
 
 echo "Checking dependencies..."
-$PYEXE -c "import pyatv, yaspin, inquirer, sponsorblock, youtubesearchpython; print ('Import test successful')"
+$PYEXE -c "import pyatv, yaspin, inquirer, sponsorblock, yt_dlp; print ('Import test successful')"
 rv=$?
 
 if [[ $rv == 0 ]]; then

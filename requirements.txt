@@ -2,5 +2,5 @@ pyatv
 yaspin
 inquirer
 sponsorblock
-youtube-search-python
 humanize
+yt_dlp
