@@ -22,7 +22,7 @@ except:
 
 skip_types = ["sponsor", "selfpromo", "intro", "outro"]
 proj_name = "SBRemote"
-proj_version = "0.3"
+proj_version = "0.3.1"
 janky_restart = True
 
 if not os.path.exists("restart.sh"):
