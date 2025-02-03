@@ -226,6 +226,7 @@ async def main_loop():
                     hold_count -= 1
 
             if is_playing:
+                wp = await asyncio.wait_for(device.metadata.playing(), 3)
                 is_near_skip = False
                 if near_skip(segments, wp.position):
                     is_near_skip = True
