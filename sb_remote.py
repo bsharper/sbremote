@@ -22,44 +22,11 @@ except:
 
 skip_types = ["sponsor", "selfpromo", "intro", "outro"]
 proj_name = "SBRemote"
-proj_version = "0.2"
+proj_version = "0.3"
 janky_restart = True
-announce_skips = False
 
 if not os.path.exists("restart.sh"):
     janky_restart = False
-
-def write_saynow():
-    if not os.path.exists("saynow.sh") and sys.platform == "darwin":
-        fn="saynow.sh"
-        print (f"Creating file \"{fn}\"")
-        s="""#!/bin/bash
-read -r -d '' VOICES <<- EOM
-Alex
-Daniel
-Fred
-Karen
-Moira
-Rishi
-Samantha
-Tessa
-Veena
-Victoria
-EOM
-DT=$(date +%k)
-TAILTXT=""
-if [[ $(($(($RANDOM%10))%2)) == 1 ]]; then
-  TAILTXT=", you got skipped"
-fi
-if [[ $DT -gt 8 && $DT -lt 23 ]]; then
-  v=$(echo "$VOICES" | sort -R | tail -1)
-  say -v "$v" "Move off ${1}${TAILTXT}" & 
-fi
-"""
-        open(fn, "w").write(s)
-        import stat
-        st = os.stat(fn)
-        os.chmod(fn, st.st_mode | stat.S_IEXEC)
 
 def restart_script():
     """ This is a bad way to do things, but until all stalling bugs are fixed, it's better than nothing """
@@ -131,9 +98,6 @@ async def do_skip_now (segments, position, remote):
         if round(s[1]) == int(position) or (position < 5 and s[1] == 0 and (s[2]-position > 2)):
             padding = s[1] - int(s[1])
             prewait = 0.0
-            if announce_skips and sys.platform == "darwin":
-                write_saynow()
-                os.system('./saynow.sh "%s"' % (s[0]))
             if padding > 0.1:
                 prewait = padding * 0.8
 
