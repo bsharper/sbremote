@@ -17,24 +17,49 @@ class SBRemoteCache():
         if self.debug:
             print (f"New search: Looking up YT data for video \"{arg}\" ")
         
-        ydl_opts = {
+        # Try a couple of format strategies and fall back to the next one on failure.
+        base_opts = {
             'quiet': True,
             'noplaylist': True,
             'default_search': 'ytsearch2',
-            'format': 'best',
+            'skip_download': True,
+            'ignore_no_formats_error': True,
         }
 
-        with YoutubeDL(ydl_opts) as ydl:
+        format_attempts = [
+            'bv*+ba/b',    # best video + best audio, common case
+            'best',        # yt-dlp default
+            'bestaudio/best',  # audio-only fallback
+            None,          # let yt-dlp decide entirely
+        ]
+
+        last_err = None
+        for fmt in format_attempts:
+            ydl_opts = dict(base_opts)
+            if fmt:
+                ydl_opts['format'] = fmt
             try:
-                result = ydl.extract_info(arg, download=False)
-                if 'entries' in result and len(result['entries']) > 0:
-                    return result['entries'][0]
-                else:
-                    print("No results found.")
-                    return None
+                with YoutubeDL(ydl_opts) as ydl:
+                    result = ydl.extract_info(arg, download=False)
+                if not result:
+                    continue
+
+                if 'entries' in result:
+                    entries = [e for e in result.get('entries', []) if e]
+                    if len(entries) > 0:
+                        return entries[0]
+                    continue
+
+                return result
             except Exception as e:
-                print(f"An error occurred: {e}")
-                return None
+                last_err = e
+                if self.debug:
+                    print (f"Search attempt with format '{fmt}' failed: {e}")
+                continue
+
+        if self.debug and last_err:
+            print (f"All search attempts failed: {last_err}")
+        return None
 
 
     def load_cache(self):
@@ -147,6 +172,10 @@ class SBRemoteCache():
         need_save_cache = False
         if hl not in titles.keys():
             video = self.search(hl)
+            if not video:
+                raise RuntimeError(f"Could not find a playable YouTube result for '{hl}'")
+            if "id" not in video:
+                raise RuntimeError(f"YouTube search result missing ID for '{hl}'")
             obj = {"id": video["id"], "artist": artist, "title": title }
             self.cache["titles"][hl] = obj
             need_save_cache = True

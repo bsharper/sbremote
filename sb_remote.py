@@ -208,7 +208,8 @@ async def main_loop():
                     skipped_segments = []
                 except Exception as ex:
                     print (f"Error during lookup: {ex}")
-                    segments = {}
+                    segments = []
+                    id = ""
                     skipped_segments = []
 
             last_hl = hl            
